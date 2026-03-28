@@ -4,6 +4,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 RAW_DATA_PATH = BASE_DIR / "data" / "raw" / "nhanes_day_level.csv"
 PROCESSED_DATA_PATH = BASE_DIR / "data" / "processed" / "nhanes_day_level_processed.csv"
+MODEL_DATA_PATH = BASE_DIR / "data" / "processed" / "nhanes_model_table.csv"
 
 MODEL_DIR = BASE_DIR / "models"
 REPORT_DIR = BASE_DIR / "reports"
