@@ -1,4 +1,4 @@
-# Python
+# Python cache
 __pycache__/
 *.py[cod]
 *.pyo
@@ -8,26 +8,14 @@ __pycache__/
 .venv/
 venv/
 
-# Jupyter
+# Jupyter checkpoints
 .ipynb_checkpoints/
 
-# VS Code
-.vscode/
-
-# OS files
+# OS / editor
 .DS_Store
 Thumbs.db
 
-# Data
-data/raw/
-data/processed/
-
-# Models and reports
-models/
-reports/
-figures/
-
-# Environment files
+# Secrets
 .env
 .env.*
 
