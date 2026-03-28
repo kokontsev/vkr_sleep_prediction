@@ -1,0 +1,4 @@
+mode,features_count,best_threshold,roc_auc,precision,recall,f1_score,best_iteration
+full,79,0.3,0.7461,0.5144,0.764,0.6149,252
+no_sleep_quality_lag,76,0.3,0.7464,0.5105,0.776,0.6159,179
+activity_only,52,0.3,0.6004,0.3968,0.8521,0.5414,428
