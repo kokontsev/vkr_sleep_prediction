@@ -1,0 +1,7 @@
+Experiment: full
+Best threshold: 0.3
+ROC-AUC: 0.7461
+Precision: 0.5144
+Recall: 0.7640
+F1-score: 0.6149
+Best iteration: 252
