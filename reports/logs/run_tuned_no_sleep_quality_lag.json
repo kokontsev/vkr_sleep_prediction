@@ -1,0 +1,17 @@
+{
+  "mode": "no_sleep_quality_lag",
+  "best_params": {
+    "depth": 4,
+    "learning_rate": 0.1,
+    "l2_leaf_reg": 7.0,
+    "iterations": 400
+  },
+  "best_iteration": 150,
+  "best_threshold": 0.3,
+  "valid_roc_auc": 0.7463946954834461,
+  "valid_f1": 0.6171298922291548,
+  "test_roc_auc": 0.7453529533670136,
+  "test_precision": 0.5081101471142965,
+  "test_recall": 0.7705949656750573,
+  "test_f1": 0.6124119117981359
+}
