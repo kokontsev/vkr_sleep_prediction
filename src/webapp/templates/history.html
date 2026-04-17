@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}История прогнозов{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h2>История прогнозов</h2>
+
+    {% if history_rows %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Дата</th>
+                    <th>Файл</th>
+                    <th>Вероятность</th>
+                    <th>Класс</th>
+                    <th>Порог</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in history_rows %}
+                <tr>
+                    <td>{{ row.id }}</td>
+                    <td>{{ row.created_at }}</td>
+                    <td>{{ row.filename }}</td>
+                    <td>{{ "%.4f"|format(row.probability) }}</td>
+                    <td>{{ row.predicted_label }}</td>
+                    <td>{{ row.threshold }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>История пока пуста.</p>
+    {% endif %}
+</section>
+{% endblock %}

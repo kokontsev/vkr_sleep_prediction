@@ -1,114 +1,140 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable
 
 import pandas as pd
 
+from .feature_list import (
+    CURRENT_SAFE_COLS,
+    LAG_SOURCE_COLS,
+    MODEL_FEATURES,
+    TARGET_COL,
+    TARGET_SLEEP_EFFICIENCY_THRESHOLD,
+)
+
 
 @dataclass
-class PreprocessConfig:
-    id_col: str = "SEQN"
-    date_col: str = "calendar_date"
+class PreprocessResult:
+    raw_df: pd.DataFrame
+    model_df: pd.DataFrame
+    inference_df: pd.DataFrame
 
 
-def ensure_datetime_columns(df: pd.DataFrame, datetime_columns: Iterable[str]) -> pd.DataFrame:
+def _ensure_calendar_date(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
-    for col in datetime_columns:
-        if col in df.columns:
-            df[col] = pd.to_datetime(df[col], errors="coerce")
+    df["calendar_date"] = pd.to_datetime(df["calendar_date"], errors="coerce")
     return df
 
 
-def ensure_numeric_columns(df: pd.DataFrame, numeric_columns: Iterable[str]) -> pd.DataFrame:
-    df = df.copy()
-    for col in numeric_columns:
-        if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="coerce")
-    return df
-
-
-def sort_panel_dataframe(df: pd.DataFrame, config: PreprocessConfig) -> pd.DataFrame:
-    df = df.copy()
-    sort_cols = [c for c in [config.id_col, config.date_col] if c in df.columns]
-    if sort_cols:
-        df = df.sort_values(sort_cols).reset_index(drop=True)
-    return df
-
-
-def add_lag_features(
-    df: pd.DataFrame,
-    group_col: str,
-    lag_columns: list[str],
-    lags: list[int],
-) -> pd.DataFrame:
-    df = df.copy()
-    for col in lag_columns:
-        if col not in df.columns:
-            continue
-        for lag in lags:
-            df[f"{col}_lag{lag}"] = df.groupby(group_col)[col].shift(lag)
-    return df
-
-
-def add_basic_time_features(df: pd.DataFrame) -> pd.DataFrame:
+def _basic_cleaning(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
 
-    # Пример. Замените на вашу фактическую логику из ноутбука.
-    if "calendar_date" in df.columns:
-        dt = pd.to_datetime(df["calendar_date"], errors="coerce")
-        df["year"] = dt.dt.year
-        df["month"] = dt.dt.month
-        df["day"] = dt.dt.day
+    required_base = ["SEQN", "calendar_date", "sleep_efficiency"]
+    df = df.dropna(subset=[c for c in required_base if c in df.columns])
+
+    df = _ensure_calendar_date(df)
+    df = df.sort_values(["SEQN", "calendar_date"]).reset_index(drop=True)
 
     return df
 
 
-def fill_missing_values(df: pd.DataFrame, fill_map: dict[str, float | int | str] | None = None) -> pd.DataFrame:
+def _build_target(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
-    if fill_map:
-        for col, value in fill_map.items():
-            if col in df.columns:
-                df[col] = df[col].fillna(value)
+    df[TARGET_COL] = (df["sleep_efficiency"] < TARGET_SLEEP_EFFICIENCY_THRESHOLD).astype("int8")
     return df
 
 
-def select_model_features(df: pd.DataFrame, model_features: list[str]) -> pd.DataFrame:
-    missing = [col for col in model_features if col not in df.columns]
+def _build_lag_features(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+
+    for lag in [1, 2, 3]:
+        for col in LAG_SOURCE_COLS:
+            if col not in df.columns:
+                continue
+            df[f"{col}_lag{lag}"] = df.groupby("SEQN")[col].shift(lag)
+
+    return df
+
+
+def _build_time_features(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+
+    df["month"] = df["calendar_date"].dt.month
+    df["day"] = df["calendar_date"].dt.day
+    df["dayofyear"] = df["calendar_date"].dt.dayofyear
+
+    return df
+
+
+def _build_model_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+
+    lag_feature_cols: list[str] = []
+    for lag in [1, 2, 3]:
+        lag_feature_cols.extend([f"{col}_lag{lag}" for col in LAG_SOURCE_COLS])
+
+    model_cols = (
+        CURRENT_SAFE_COLS
+        + ["month", "day", "dayofyear", TARGET_COL]
+        + lag_feature_cols
+    )
+
+    existing_cols = [c for c in model_cols if c in df.columns]
+    model_df = df[existing_cols].copy()
+
+    # Как и в ноутбуке: удаляем записи, где нет трёх лагов эффективности сна
+    for c in ["sleep_efficiency_lag1", "sleep_efficiency_lag2", "sleep_efficiency_lag3"]:
+        if c not in model_df.columns:
+            raise ValueError(f"Не найден обязательный столбец после лагов: {c}")
+
+    model_df = model_df.dropna(
+        subset=[
+            "sleep_efficiency_lag1",
+            "sleep_efficiency_lag2",
+            "sleep_efficiency_lag3",
+        ]
+    ).reset_index(drop=True)
+
+    return model_df
+
+
+def _prepare_for_inference(model_df: pd.DataFrame) -> pd.DataFrame:
+    df = model_df.copy()
+
+    drop_cols = [
+        "SEQN",
+        "calendar_date",
+        TARGET_COL,
+        "sleep_efficiency_lag1",
+        "sleep_efficiency_lag2",
+        "sleep_efficiency_lag3",
+    ]
+
+    df = df.drop(columns=[c for c in drop_cols if c in df.columns])
+
+    missing = [c for c in MODEL_FEATURES if c not in df.columns]
     if missing:
         raise ValueError(
             "После предобработки отсутствуют признаки, нужные модели: "
             + ", ".join(missing)
         )
-    return df[model_features].copy()
+
+    return df[MODEL_FEATURES].copy()
 
 
-def preprocess_for_inference(
-    df: pd.DataFrame,
-    model_features: list[str],
-    lag_columns: list[str] | None = None,
-    lags: list[int] | None = None,
-) -> pd.DataFrame:
-    df = df.copy()
+def preprocess_uploaded_dataframe(df: pd.DataFrame) -> PreprocessResult:
+    raw_df = df.copy()
 
-    # 1. Базовые преобразования
-    df = ensure_datetime_columns(df, ["calendar_date", "date_time_onset", "date_time_wakeup"])
-    df = sort_panel_dataframe(df, PreprocessConfig())
+    df = _basic_cleaning(df)
+    df = _build_target(df)
+    df = _build_lag_features(df)
+    df = _build_time_features(df)
 
-    # 2. Ваша инженерия признаков
-    df = add_basic_time_features(df)
+    model_df = _build_model_dataframe(df)
+    inference_df = _prepare_for_inference(model_df)
 
-    # 3. Лаговые признаки
-    if lag_columns and lags and "SEQN" in df.columns:
-        df = add_lag_features(
-            df=df,
-            group_col="SEQN",
-            lag_columns=lag_columns,
-            lags=lags,
-        )
-
-    # 4. Заполнение пропусков
-    df = fill_missing_values(df)
-
-    # 5. Оставляем только нужные признаки
-    return select_model_features(df, model_features)
+    return PreprocessResult(
+        raw_df=raw_df,
+        model_df=model_df,
+        inference_df=inference_df,
+    )

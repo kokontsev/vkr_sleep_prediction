@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Результат прогноза{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h2>Результат прогноза</h2>
+
+    <div class="result-grid">
+        <div class="metric-box">
+            <div class="metric-title">Файл</div>
+            <div class="metric-value small">{{ filename }}</div>
+        </div>
+
+        <div class="metric-box">
+            <div class="metric-title">Строк в исходном файле</div>
+            <div class="metric-value">{{ rows_total }}</div>
+        </div>
+
+        <div class="metric-box">
+            <div class="metric-title">Строк после предобработки</div>
+            <div class="metric-value">{{ rows_after_preprocessing }}</div>
+        </div>
+
+        <div class="metric-box">
+            <div class="metric-title">Вероятность неблагоприятного сна</div>
+            <div class="metric-value">{{ "%.4f"|format(probability) }}</div>
+        </div>
+
+        <div class="metric-box">
+            <div class="metric-title">Итоговый класс</div>
+            <div class="metric-value">{{ predicted_label }}</div>
+        </div>
+
+        <div class="metric-box">
+            <div class="metric-title">Порог</div>
+            <div class="metric-value">{{ threshold }}</div>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <h3>Наиболее важные признаки модели</h3>
+    {% if top_features %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Признак</th>
+                    <th>Важность</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in top_features %}
+                <tr>
+                    <td>{{ item.feature }}</td>
+                    <td>{{ "%.4f"|format(item.importance) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Список значимых признаков не получен.</p>
+    {% endif %}
+</section>
+{% endblock %}

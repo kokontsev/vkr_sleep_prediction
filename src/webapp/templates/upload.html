@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Загрузка данных{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h2>Загрузка входного CSV</h2>
+    <p>
+        Для прогноза загрузите CSV-файл в формате, совместимом с исходной структурой данных.
+        На текущем этапе минимально обязательны столбцы:
+        <code>SEQN</code>, <code>calendar_date</code>, <code>sleep_efficiency</code>.
+    </p>
+
+    <form method="post" enctype="multipart/form-data" class="upload-form">
+        <input type="file" name="file" accept=".csv" required>
+        <button type="submit" class="button">Загрузить и спрогнозировать</button>
+    </form>
+</section>
+{% endblock %}
