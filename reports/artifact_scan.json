@@ -1,0 +1,48 @@
+{
+  "repo_root": "C:\\Users\\Олег\\Учеба\\МИРЭА\\4 курс\\ВКР\\vkr_sleep_prediction",
+  "models_found": [
+    "models\\catboost\\catboost_activity_only.cbm",
+    "models\\catboost\\catboost_full.cbm",
+    "models\\catboost\\catboost_no_sleep_quality_lag.cbm",
+    "models\\catboost\\catboost_tuned_no_sleep_quality_lag.cbm"
+  ],
+  "catboost_feature_names": {},
+  "feature_lists_from_code": {},
+  "thresholds_from_code": {
+    "notebooks\\02_preprocessing_and_target.ipynb": [
+      0.85
+    ]
+  },
+  "model_paths_from_code": {
+    "notebooks\\04_catboost_and_evaluation.ipynb": [
+      "../models/catboost/catboost_full.cbm"
+    ],
+    "notebooks\\05_ablation_experiments.ipynb": [
+      "catboost_{mode}.cbm"
+    ],
+    "notebooks\\06_catboost_tuning.ipynb": [
+      "catboost_tuned_no_sleep_quality_lag.cbm"
+    ],
+    "scripts\\extract_artifacts.py": [
+      "FEATURE NAMES ИЗ .cbm"
+    ]
+  },
+  "likely_best_model_candidates": [
+    {
+      "path": "models\\catboost\\catboost_tuned_no_sleep_quality_lag.cbm",
+      "score": 4
+    },
+    {
+      "path": "models\\catboost\\catboost_full.cbm",
+      "score": 3
+    },
+    {
+      "path": "models\\catboost\\catboost_activity_only.cbm",
+      "score": 1
+    },
+    {
+      "path": "models\\catboost\\catboost_no_sleep_quality_lag.cbm",
+      "score": 1
+    }
+  ]
+}
