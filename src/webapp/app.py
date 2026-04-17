@@ -17,7 +17,7 @@ def create_app() -> Flask:
 
     app.config["SECRET_KEY"] = "sleep-prediction-secret-key"
     app.config["UPLOAD_FOLDER"] = str(Path("uploads").resolve())
-    app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 MB
+    app.config["MAX_CONTENT_LENGTH"] = 200 * 1024 * 1024  # 10 MB
 
     Path(app.config["UPLOAD_FOLDER"]).mkdir(parents=True, exist_ok=True)
 

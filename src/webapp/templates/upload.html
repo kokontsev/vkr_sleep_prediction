@@ -6,11 +6,21 @@
 <section class="card">
     <h2>Загрузка входного CSV</h2>
     <p>
-        Для прогноза загрузите CSV-файл в формате, совместимом с исходной структурой данных.
+        Для прогноза можно либо загрузить собственный CSV-файл,
+        либо использовать встроенный датасет проекта.
         На текущем этапе минимально обязательны столбцы:
         <code>SEQN</code>, <code>calendar_date</code>, <code>sleep_efficiency</code>.
     </p>
 
+    <h3>Вариант 1. Использовать встроенный датасет</h3>
+    <form method="post" class="upload-form">
+        <input type="hidden" name="use_builtin_dataset" value="1">
+        <button type="submit" class="button">Использовать встроенный NHANES</button>
+    </form>
+
+    <hr style="margin: 24px 0;">
+
+    <h3>Вариант 2. Загрузить свой CSV</h3>
     <form method="post" enctype="multipart/form-data" class="upload-form">
         <input type="file" name="file" accept=".csv" required>
         <button type="submit" class="button">Загрузить и спрогнозировать</button>

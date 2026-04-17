@@ -6,6 +6,14 @@
 <section class="card">
     <h2>Результат прогноза</h2>
 
+    <div class="risk-banner {% if predicted_class == 1 %}risk-high{% else %}risk-low{% endif %}">
+        {% if predicted_class == 1 %}
+            Обнаружен повышенный риск неблагоприятного сна
+        {% else %}
+            Риск неблагоприятного сна оценивается как низкий
+        {% endif %}
+    </div>
+
     <div class="result-grid">
         <div class="metric-box">
             <div class="metric-title">Файл</div>
@@ -33,10 +41,25 @@
         </div>
 
         <div class="metric-box">
-            <div class="metric-title">Порог</div>
+            <div class="metric-title">Порог вероятности классификации</div>
             <div class="metric-value">{{ threshold }}</div>
         </div>
     </div>
+</section>
+
+<section class="card">
+    <h3>Краткая интерпретация результата</h3>
+    {% if predicted_class == 1 %}
+        <p>
+            Модель отнесла наблюдение к классу неблагоприятного сна, так как рассчитанная
+            вероятность риска превышает установленный порог классификации.
+        </p>
+    {% else %}
+        <p>
+            Модель отнесла наблюдение к классу благоприятного сна, так как рассчитанная
+            вероятность риска не превышает установленный порог классификации.
+        </p>
+    {% endif %}
 </section>
 
 <section class="card">

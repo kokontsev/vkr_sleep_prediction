@@ -21,7 +21,7 @@
             <tbody>
                 {% for row in history_rows %}
                 <tr>
-                    <td>{{ row.id }}</td>
+                    <td><a href="{{ url_for('history_detail', prediction_id=row.id) }}">{{ row.id }}</a></td>
                     <td>{{ row.created_at }}</td>
                     <td>{{ row.filename }}</td>
                     <td>{{ "%.4f"|format(row.probability) }}</td>
