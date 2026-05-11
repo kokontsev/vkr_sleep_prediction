@@ -2,8 +2,8 @@ Experiment: full
 Features count: 79
 Categorical columns: ['weekday']
 Best threshold: 0.30
-Best iteration: 252
-ROC-AUC: 0.7461
-Precision: 0.5144
-Recall: 0.7640
-F1-score: 0.6149
+Best iteration: 144
+ROC-AUC: 0.7456
+Precision: 0.5137
+Recall: 0.7643
+F1-score: 0.6145

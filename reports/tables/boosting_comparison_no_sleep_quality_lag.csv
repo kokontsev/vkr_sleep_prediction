@@ -1,0 +1,4 @@
+model,feature_mode,features_count,best_threshold,roc_auc,precision,recall,f1_score
+CatBoost,no_sleep_quality_lag,76,0.3,0.7461,0.5091,0.778,0.6155
+LightGBM,no_sleep_quality_lag,76,0.3,0.7414,0.5133,0.7572,0.6118
+XGBoost,no_sleep_quality_lag,76,0.3,0.7427,0.5123,0.7523,0.6095

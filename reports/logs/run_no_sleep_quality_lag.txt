@@ -2,8 +2,8 @@ Experiment: no_sleep_quality_lag
 Features count: 76
 Categorical columns: ['weekday']
 Best threshold: 0.30
-Best iteration: 179
-ROC-AUC: 0.7464
-Precision: 0.5105
-Recall: 0.7760
-F1-score: 0.6159
+Best iteration: 167
+ROC-AUC: 0.7461
+Precision: 0.5091
+Recall: 0.7780
+F1-score: 0.6155
